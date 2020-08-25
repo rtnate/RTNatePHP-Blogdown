@@ -23,5 +23,10 @@
         "spatie/yaml-front-matter": "^2.0",
         "erusev/parsedown": "^1.7",
         "rtnatephp/util": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "RTNatePHP\\": "./src/"
+        }
     }
 }
