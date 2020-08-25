@@ -1,0 +1,27 @@
+{
+    "name": "rtnatephp/blogdown",
+    "description": "Static file based website/blog content loader for PHP",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nate Taylor",
+            "email": "nate@rtelectronix.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/rtnate/RTNatePHP-Util.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:rtnate/RTNatePHP-BasicApp.git"
+        }
+    ],
+    "require": {
+        "spatie/yaml-front-matter": "^2.0",
+        "erusev/parsedown": "^1.7",
+        "rtnatephp/util": "dev-master"
+    }
+}
