@@ -9,8 +9,9 @@ class TextFile extends BaseFile
     protected $file_contents = '';
     protected $front_matter = [];
 
-    public function __construct(string $filename, string $file_type = self::FILE_TYPE_TEXT)
+    public function __construct(string $filename, string $file_type = '')
     {
+        if (!$file_type) $file_type = FileType::STRING();
         parent::__construct($filename, $file_type);
     }
 
@@ -20,7 +21,7 @@ class TextFile extends BaseFile
         if ($contents === false)
         {
             $this->file_contents = '';
-            $this->file_type = static::FILE_TYPE_INVALID;
+            $this->file_type = FileType::INVALID();
         }
         else 
         {
@@ -52,8 +53,8 @@ class TextFile extends BaseFile
 
     public function fileContents(): string
     {
-        if ($this->file_type === static::FILE_TYPE_INVALID) return '';
-        if ($this->file_type === static::FILE_TYPE_UNKNOWN) return '';
+        if ($this->file_type === FileType::INVALID()) return '';
+        if ($this->file_type === FileType::UNKNOWN()) return '';
         return file_get_contents($this->file_name);
     }
 }

@@ -10,7 +10,7 @@ class YamlFile extends BaseFile
 
     public function __construct(string $filename)
     {
-        parent::__construct($filename, self::FILE_TYPE_YAML);
+        parent::__construct($filename, FileType::YAML());
     }
 
     protected function parse(string $filename)
@@ -19,7 +19,7 @@ class YamlFile extends BaseFile
         if ($contents === false)
         {
             $this->file_data = [];
-            $this->file_type = static::FILE_TYPE_INVALID;
+            $this->file_type = FileType::INVALID();
         }
         else 
         {
@@ -38,7 +38,7 @@ class YamlFile extends BaseFile
         catch(\Throwable $error)
         {
             $this->file_data = [];
-            $this->file_type = static::FILE_TYPE_INVALID;
+            $this->file_type = FileType::INVALID();
         }
     }
 
@@ -59,8 +59,8 @@ class YamlFile extends BaseFile
 
     public function fileContents(): string
     {
-        if ($this->file_type === static::FILE_TYPE_INVALID) return '';
-        if ($this->file_type === static::FILE_TYPE_UNKNOWN) return '';
+        if ($this->file_type === FileType::INVALID()) return '';
+        if ($this->file_type === FileType::UNKNOWN()) return '';
         return file_get_contents($this->file_name);
     }
 }

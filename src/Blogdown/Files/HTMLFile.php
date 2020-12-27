@@ -9,6 +9,6 @@ class HTMLFile extends TextFile
 
     public function __construct(string $filename)
     {
-        parent::__construct($filename, self::FILE_TYPE_HTML);
+        parent::__construct($filename, FileType::HTML());
     }
 }

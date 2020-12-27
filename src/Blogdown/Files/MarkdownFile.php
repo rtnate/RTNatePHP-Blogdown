@@ -9,6 +9,6 @@ class MarkdownFile extends TextFile
 
     public function __construct(string $filename)
     {
-        parent::__construct($filename, self::FILE_TYPE_MARKDOWN);
+        parent::__construct($filename, FileType::MARKDOWN());
     }
 }

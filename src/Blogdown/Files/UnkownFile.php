@@ -2,12 +2,12 @@
 
 namespace RTNatePHP\Blogdown\Files;
 
-class InvalidFile extends BaseFile
+class UnknownFile extends BaseFile
 {
 
     public function __construct(string $filename)
     {
-        parent::__construct($filename, FileType::INVALID());
+        parent::__construct($filename, FileType::UNKNOWN());
     }
 
     protected function parse(string $filename)
@@ -34,4 +34,5 @@ class InvalidFile extends BaseFile
     {
         return '';
     }
+
 }

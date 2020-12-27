@@ -2,24 +2,19 @@
 
 namespace RTNatePHP\Blogdown\Files;
 
+use RTNatePHP\Blogdown\Files\FileType;
+
 abstract class BaseFile implements FileInterface
 {
-    const FILE_TYPE_TEXT= 'text';
-    const FILE_TYPE_HTML = 'html';
-    const FILE_TYPE_MARKDOWN = 'markdown';
-    const FILE_TYPE_PHP = 'php';
-    const FILE_TYPE_JSON = 'json';
-    const FILE_TYPE_XML = 'xml';
-    const FILE_TYPE_YAML = 'yaml';
-    const FILE_TYPE_INVALID = 'invalid';
-    const FILE_TYPE_UNKNOWN = 'unknown';
 
     protected $file_name;
     protected $file_exists = false;
-    protected $file_type = self::FILE_TYPE_INVALID;
+    protected $file_type = null;
+    protected $loaded = false;
 
     protected function __construct(string $filename, string $file_type)
     {
+        $this->file_type = FileType::INVALID();
         $this->file_name = $filename;
         if (file_exists($filename))
         {
@@ -29,7 +24,7 @@ abstract class BaseFile implements FileInterface
         else 
         {
             $this->file_exists = false;
-            $this->file_type = self::FILE_TYPE_INVALID;
+            $this->file_type = FileType::INVALID();
         }
         if ($this->file_exists) $this->parse($filename);
     }
@@ -37,35 +32,21 @@ abstract class BaseFile implements FileInterface
     protected function sanitizeFileType(string $file_type)
     {
         $type = strtolower($file_type);
-        switch($type)
+        return new FileType($type);
+        if (!$type) 
         {
-            case self::FILE_TYPE_TEXT:
-                return self::FILE_TYPE_TEXT;
-            case self::FILE_TYPE_HTML:
-                return self::FILE_TYPE_HTML;
-            case self::FILE_TYPE_MARKDOWN:
-                return self::FILE_TYPE_MARKDOWN;
-            case self::FILE_TYPE_PHP:
-                return self::FILE_TYPE_PHP;
-            case self::FILE_TYPE_JSON:
-                return self::FILE_TYPE_JSON;
-            case self::FILE_TYPE_XML:
-                return self::FILE_TYPE_XML;
-            case self::FILE_TYPE_YAML:
-                return self::FILE_TYPE_YAML;
-            case self::FILE_TYPE_UNKNOWN:
-                return self::FILE_TYPE_UNKNOWN;
-            case self::FILE_TYPE_INVALID:
-            default:
-                    return self::FILE_TYPE_INVALID;
+            return FileType::Invalid();
         }
     }
 
     abstract protected function parse(string $filename);
 
-    public function valid(): bool
+    public function isValid(): bool
     {
-        return $this->validFile;
+        if ($this->file_type === null) return false;
+        if (!$this->file_exists) return false;
+        if ($this->file_type->equals('INVALID')) return false;
+        else return true;
     }
 
     public function hasFrontmatter(): bool
@@ -81,7 +62,13 @@ abstract class BaseFile implements FileInterface
 
     public function type(): string
     {
-        return $this->file_type;
+        return (string)$this->fileType();
+    }
+
+    public function fileType(): FileType
+    {
+        if ($this->file_type === null) return FileType::INVALID();
+        else return $this->file_type;
     }
 
     public function filename(): string
@@ -114,4 +101,54 @@ abstract class BaseFile implements FileInterface
         return pathinfo($this->file_name);
     }
 
+    public function exists(): bool 
+    {
+        return $this->file_exists;
+    }
+
+    public function load()
+    {
+        try 
+        {
+            $this->parse($this->file_name);
+            $this->loaded = true;
+        }
+        catch(\Throwable $e)
+        {
+            throw new FileException('Error parsing file.', $this->file_name, $e);
+        }
+    }
+
+    static public function DetectFileType(string $filename): string
+    {
+        if (file_exists($filename))
+        {
+            if (is_dir($filename)) return FileType::INVALID();
+            $ext = pathinfo($filename, PATHINFO_EXTENSION);
+            $ext = strtolower($ext);
+            switch($ext) 
+            {
+                case 'html':
+                    return FileType::HTML();
+                case 'md': 
+                    return FileType::MARKDOWN(); 
+                case 'php': 
+                    return FileType::PHP(); 
+                case 'json': 
+                    return FileType::JSON(); 
+                case 'xml': 
+                    return FileType::XML(); 
+                case 'yaml': 
+                case 'yml': 
+                    return FileType::YML();
+                case 'txt':
+                    return FileType::TEXT();
+;
+            }
+            $test = file_get_contents($filename, false, null. 0, 128);
+            if ($test === false) return FileType::UNKNOWN();
+            else return FileType::TEXT();
+        }
+        else return FileType::INVALID();
+    }
 }

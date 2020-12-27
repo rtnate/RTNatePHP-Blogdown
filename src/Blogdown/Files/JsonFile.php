@@ -8,7 +8,7 @@ class JsonFile extends BaseFile
 
     public function __construct(string $filename)
     {
-        parent::__construct($filename, self::FILE_TYPE_JSON);
+        parent::__construct($filename, FileType::JSON);
     }
 
     protected function parse(string $filename)
@@ -17,7 +17,7 @@ class JsonFile extends BaseFile
         if ($contents === false)
         {
             $this->file_data = [];
-            $this->file_type = static::FILE_TYPE_INVALID;
+            $this->file_type = FileType::INVALID();
         }
         else 
         {
@@ -25,7 +25,7 @@ class JsonFile extends BaseFile
             if ($data === null)
             {
                 $this->file_data = [];
-                $this->file_type = static::FILE_TYPE_INVALID;
+                $this->file_type = FileType::INVALID();
             }
             else $this->file_data = $data;
         }
@@ -48,8 +48,8 @@ class JsonFile extends BaseFile
 
     public function fileContents(): string
     {
-        if ($this->file_type === static::FILE_TYPE_INVALID) return '';
-        if ($this->file_type === static::FILE_TYPE_UNKNOWN) return '';
+        if ($this->file_type === FileType::INVALID()) return '';
+        if ($this->file_type === FileType::UNKNOWN()) return '';
         return file_get_contents($this->file_name);
     }
 }

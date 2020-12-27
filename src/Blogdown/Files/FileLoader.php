@@ -32,24 +32,24 @@ class FileLoader
     static public function loadFile(string $filename): FileInterface
     {
         $type = self::DetectFileType($filename);
-        switch($type)
+        switch((string)$type)
         {
-            case BaseFile::FILE_TYPE_TEXT:
-                return new InvalidFile($filename);
-            case BaseFile::FILE_TYPE_HTML:
+            case FileType::TEXT():
+                return new TextFile($filename);
+            case FileType::HTML():
                 return new HTMLFile($filename);
-            case BaseFile::FILE_TYPE_MARKDOWN:
+            case FileType::MARKDOWN():
                 return new MarkdownFile($filename);
-            case BaseFile::FILE_TYPE_PHP:
-                return BaseFile::FILE_TYPE_PHP;
-            case BaseFile::FILE_TYPE_JSON:
+            case FileType::PHP():
+                return new PHPFile($filename);
+            case FileType::JSON():
                 return new JsonFile($filename);
-            case BaseFile::FILE_TYPE_XML:
-                return new InvalidFile($filename);
-            case BaseFile::FILE_TYPE_YAML:
+            case FileType::XML():
+                return new UnknownFile($filename);
+            case FileType::YAML():
                 return new YamlFile($filename);
-            case BaseFile::FILE_TYPE_UNKNOWN:
-            case BaseFile::FILE_TYPE_INVALID:
+            case FileType::UNKNOWN():
+                return new UnknownFile($filename);
             default:
                 return new InvalidFile($filename);
         }
@@ -57,31 +57,6 @@ class FileLoader
 
     static protected function DetectFileType(string $filename): string
     {
-        if (file_exists($filename))
-        {
-            if (is_dir($filename)) return BaseFile::FILE_TYPE_INVALID;
-            $ext = pathinfo($filename, PATHINFO_EXTENSION);
-            $ext = strtolower($ext);
-            switch($ext) 
-            {
-                case 'html':
-                    return BaseFile::FILE_TYPE_HTML;
-                case 'md': 
-                    return BaseFile::FILE_TYPE_MARKDOWN; 
-                case 'php': 
-                    return BaseFile::FILE_TYPE_PHP; 
-                case 'json': 
-                    return BaseFile::FILE_TYPE_JSON; 
-                case 'xml': 
-                    return BaseFile::FILE_TYPE_XML; 
-                case 'yaml': 
-                case 'yml': 
-                    return BaseFile::FILE_TYPE_YAML;
-            }
-            $test = file_get_contents($filename, false, null. 0, 128);
-            if ($test === false) return BaseFile::FILE_TYPE_INVALID;
-            else return BaseFile::FILE_TYPE_TEXT;
-        }
-        else return BaseFile::FILE_TYPE_INVALID;
+        return BaseFile::DetectFileType($filename);
     }
 }
